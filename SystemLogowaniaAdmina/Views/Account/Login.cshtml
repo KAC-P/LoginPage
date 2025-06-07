@@ -1,0 +1,91 @@
+﻿@{
+    Layout = null;
+    ViewData["Title"] = "Logowanie";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"]</title>
+    <style>
+        /* Prosty styl formularza */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 300px;
+        }
+
+            .login-container h2 {
+                margin-bottom: 20px;
+                text-align: center;
+            }
+
+            .login-container label {
+                display: block;
+                margin-top: 10px;
+            }
+
+            .login-container input[type="text"],
+            .login-container input[type="password"] {
+                width: 100%;
+                padding: 8px;
+                margin-top: 5px;
+                box-sizing: border-box;
+            }
+
+            .login-container button {
+                margin-top: 20px;
+                width: 100%;
+                padding: 10px;
+                background-color: #007bff;
+                border: none;
+                color: white;
+                font-weight: bold;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+                .login-container button:hover {
+                    background-color: #0056b3;
+                }
+
+        .error-message {
+            color: red;
+            margin-top: 15px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Zaloguj się</h2>
+
+        <form method="post" asp-controller="Account" asp-action="Login">
+            <label for="username">Nazwa użytkownika:</label>
+            <input type="text" id="username" name="username" required />
+
+            <label for="password">Hasło:</label>
+            <input type="password" id="password" name="password" required />
+
+            <button type="submit">Zaloguj się</button>
+        </form>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="error-message">@ViewBag.Error</div>
+        }
+    </div>
+</body>
+</html>
