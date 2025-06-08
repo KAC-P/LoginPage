@@ -1,7 +1,11 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using System.Security.Claims
+
+@{
+    var userName = User.Identity.IsAuthenticated ? User.Identity.Name : "Gość";
+    var userEmail = User.FindFirst(ClaimTypes.Email)?.Value ?? "";
+    var userRole = User.FindFirst(ClaimTypes.Role)?.Value ?? "";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Panel Administracyjny</h1>
-</div>
+<h2>Witaj, @userName!</h2>
+<p>Email: @userEmail</p>
+<p>Rola: @userRole</p>

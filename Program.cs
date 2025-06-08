@@ -4,8 +4,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddAuthentication("CookieAuth")
     .AddCookie("CookieAuth", options =>
     {
-        options.LoginPath = "/Account/Login";  // gdzie przekierowaæ, jeœli nie zalogowany
-        options.AccessDeniedPath = "/Account/AccessDenied"; // gdy brak uprawnieñ
+        options.LoginPath = "/Account/Login";  // jesli uzytkownik nie zalogowany przekieruj
+        options.AccessDeniedPath = "/Account/AccessDenied"; // jesli nie uzytkownik nie ma uprawnien
     });
 
 builder.Services.AddAuthorization();

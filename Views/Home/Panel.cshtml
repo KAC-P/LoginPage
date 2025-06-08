@@ -1,0 +1,25 @@
+﻿@model List<SystemLogowaniaAdmina.Models.UserModel>
+
+<h2>Panel Administratora</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Imię użytkownika</th>
+            <th>Email</th>
+            <th>Dostęp do systemów</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.UserName</td>
+                <td>@user.Email</td>
+                <td>
+                    @string.Join(", ", user.AccessTo)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

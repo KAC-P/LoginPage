@@ -1,22 +1,99 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
-body {
-  margin-bottom: 60px;
+body.loginpage {
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    width: 300px;
+}
+
+    .login-container h2 {
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .login-container label {
+        display: block;
+        margin-top: 10px;
+    }
+
+    .login-container input[type="text"],
+    .login-container input[type="password"] {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        box-sizing: border-box;
+    }
+
+    .login-container button {
+        margin-top: 20px;
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        border: none;
+        color: white;
+        font-weight: bold;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+        .login-container button:hover {
+            background-color: #0056b3;
+        }
+
+.container-fluid {
+    background-color: #007bff;
+}
+
+/* Nowy styl navbaru */
+.custom-navbar {
+    background-color: #1a73e8 !important;
+}
+
+    .custom-navbar .nav-link,
+    .custom-navbar .navbar-brand {
+        color: white !important;
+    }
+
+        .custom-navbar .nav-link:hover {
+            color: #cce4ff !important;
+        }
+
+.error-message {
+    color: red;
+    margin-top: 15px;
+    text-align: center;
+}
+
+.padlock {
+    display: block;
+    margin: 0 auto 10px auto;
+    width: 100px;
 }

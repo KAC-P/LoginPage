@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
@@ -7,61 +8,70 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using SystemLogowaniaAdmina.Models;
 
-
-public class AccountController : Controller
+namespace SystemLogowaniaAdmina.Controllers
 {
-    private readonly List<UserModel> _users;
-
-    public AccountController(IConfiguration configuration)
+    public class AccountController : Controller
     {
-        // Odczyt użytkowników z appsettings.json
-        _users = configuration.GetSection("Users").Get<List<UserModel>>();
-    }
+        private readonly List<AdminModel> _admins;
+        private readonly List<UserModel> _users;
 
-    [HttpGet]
-    public IActionResult Login()
-    {
-        return View();
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Login(string username, string password)
-    {
-        // Sprawdź, czy podane dane zgadzają się z którymś użytkownikiem
-        var user = _users.Find(u => u.UserName == username && u.Password == password);
-
-        if (user == null)
+        public AccountController(IConfiguration configuration)
         {
-            ViewBag.Error = "Niepoprawna nazwa użytkownika lub hasło";
+            _admins = configuration.GetSection("Admins").Get<List<AdminModel>>();
+            _users = configuration.GetSection("Users").Get<List<UserModel>>();
+        }
+
+        [HttpGet]
+        public IActionResult Login()
+        {
             return View();
         }
 
-        // Tworzymy claims (uprawnienia)
-        var claims = new List<Claim>
+        [HttpPost]
+        public async Task<IActionResult> Login(string username, string password)
         {
-            new Claim(ClaimTypes.Name, user.UserName),
-            new Claim(ClaimTypes.Role, user.Role),
-            new Claim(ClaimTypes.Email, user.Email),
-        };
+            var admin = _admins.Find(a => a.UserName == username && a.Password == password);
 
-        var identity = new ClaimsIdentity(claims, "CookieAuth");
-        var principal = new ClaimsPrincipal(identity);
+            if (admin == null)
+            {
+                ViewBag.Error = "Niepoprawna nazwa użytkownika lub hasło";
+                return View();
+            }
 
-        await HttpContext.SignInAsync("CookieAuth", principal);
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, admin.UserName),
+                new Claim(ClaimTypes.Role, admin.Role),
+                new Claim(ClaimTypes.Email, admin.Email)
+            };
 
-        return RedirectToAction("Index", "Home");
-    }
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
 
-    [HttpGet]
-    public async Task<IActionResult> Logout()
-    {
-        await HttpContext.SignOutAsync("CookieAuth");
-        return RedirectToAction("Login");
-    }
+            await HttpContext.SignInAsync("CookieAuth", principal);
 
-    [HttpGet]
-    public IActionResult AccessDenied()
-    {
-        return View();
+
+            // Przekierowanie do panelu admina
+            return RedirectToAction("Index","Home");
+        }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult Panel()
+        {
+            // Przekazujemy listę użytkowników do widoku panelu admina
+            return View("~/Views/Admin/Panel.cshtml", _users);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Login");
+        }
+
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
     }
 }

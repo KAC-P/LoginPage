@@ -1,34 +1,29 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+using System.Collections.Generic;
 using SystemLogowaniaAdmina.Models;
 
 namespace SystemLogowaniaAdmina.Controllers
 {
-    [Authorize]
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly List<UserModel> _users;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IConfiguration configuration)
         {
-            _logger = logger;
+            _users = configuration.GetSection("Users").Get<List<UserModel>>();
+        }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult Panel()
+        {
+            // Przekazujemy listę użytkowników do widoku panelu admina
+            return View(_users);
         }
 
         public IActionResult Index()
         {
             return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
