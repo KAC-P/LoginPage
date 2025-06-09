@@ -1,3 +1,10 @@
+html, body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+}
+
 html {
     font-size: 14px;
 }
@@ -8,17 +15,7 @@ html {
     }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-    position: relative;
-    min-height: 100%;
-}
-
 body.loginpage {
-    font-family: Arial, sans-serif;
     background-color: #f0f2f5;
     display: flex;
     justify-content: center;
@@ -26,29 +23,36 @@ body.loginpage {
     height: 100vh;
 }
 
+/* Kontener logowania/resetowania */
 .login-container {
-    background-color: white;
+    background-color: #ffffff;
     padding: 30px;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
     .login-container h2 {
         margin-bottom: 20px;
-        text-align: center;
     }
 
     .login-container label {
-        display: block;
+        align-self: flex-start;
         margin-top: 10px;
     }
 
-    .login-container input[type="text"],
-    .login-container input[type="password"] {
+    .login-container input {
         width: 100%;
         padding: 8px;
         margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+        background-color: #f8f9fa;
         box-sizing: border-box;
     }
 
@@ -62,17 +66,50 @@ body.loginpage {
         font-weight: bold;
         border-radius: 4px;
         cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
     }
 
         .login-container button:hover {
             background-color: #0056b3;
         }
 
+/* Komunikaty */
+.success-message,
+.error-message {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.success-message {
+    color: green;
+    background-color: #e6ffea;
+    border: 1px solid #b2f2bb;
+}
+
+.error-message {
+    color: red;
+    background-color: #ffe6e6;
+    border: 1px solid #f5b5b5;
+}
+
+/* Logo */
+.padlock {
+    display: block;
+    margin: 0 auto 10px auto;
+    width: 100px;
+}
+
+
+
+
+
+/* Navbar (jeœli u¿ywane gdziekolwiek indziej) */
 .container-fluid {
     background-color: #007bff;
 }
 
-/* Nowy styl navbaru */
 .custom-navbar {
     background-color: #1a73e8 !important;
 }
@@ -85,15 +122,3 @@ body.loginpage {
         .custom-navbar .nav-link:hover {
             color: #cce4ff !important;
         }
-
-.error-message {
-    color: red;
-    margin-top: 15px;
-    text-align: center;
-}
-
-.padlock {
-    display: block;
-    margin: 0 auto 10px auto;
-    width: 100px;
-}

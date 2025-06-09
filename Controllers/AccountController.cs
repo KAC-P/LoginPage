@@ -14,7 +14,7 @@ namespace SystemLogowaniaAdmina.Controllers
     {
         private readonly List<AdminModel> _admins;
         private readonly List<UserModel> _users;
-
+        //Przypisywanie wlasciwosci
         public AccountController(IConfiguration configuration)
         {
             _admins = configuration.GetSection("Admins").Get<List<AdminModel>>();
@@ -30,7 +30,7 @@ namespace SystemLogowaniaAdmina.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string username, string password)
         {
-            // Próba logowania jako admin
+            // Proba logowania jako admin
             var admin = _admins.FirstOrDefault(a => a.UserName == username && a.Password == password);
 
             if (admin != null)
@@ -49,7 +49,7 @@ namespace SystemLogowaniaAdmina.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            // Próba logowania jako użytkownik
+            // Proba logowania jako uzytkownik
             var user = _users.FirstOrDefault(u => u.UserName == username && u.Password == password);
 
             if (user == null)
@@ -59,38 +59,57 @@ namespace SystemLogowaniaAdmina.Controllers
             }
 
             var userClaims = new List<Claim>
-    {
-        new Claim(ClaimTypes.Name, user.UserName),
-        new Claim(ClaimTypes.Email, user.Email),
-        new Claim("AccessTo", string.Join(",", user.AccessTo))
-    };
+            {   
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim("AccessTo", string.Join(",", user.AccessTo))
+            };
 
-            var userIdentity = new ClaimsIdentity(userClaims, "CookieAuth");
-            var userPrincipal = new ClaimsPrincipal(userIdentity);
+                var userIdentity = new ClaimsIdentity(userClaims, "CookieAuth");
+                var userPrincipal = new ClaimsPrincipal(userIdentity);
 
-            await HttpContext.SignInAsync("CookieAuth", userPrincipal);
-            return RedirectToAction("Index", "Home");
+                await HttpContext.SignInAsync("CookieAuth", userPrincipal);
+                return RedirectToAction("Index", "Home");
         }
-
-
-
-        [Authorize(Roles = "Admin")]
-        public IActionResult Panel()
-        {
-            // Przekazujemy listę użytkowników do widoku panelu admina
-            return View("~/Views/Admin/Panel.cshtml", _users);
-        }
-
+        // Reset hasla
         [HttpGet]
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Login");
-        }
-
-        public IActionResult AccessDenied()
+        public IActionResult ResetPassword()
         {
             return View();
         }
+
+        [HttpPost]
+        public IActionResult ResetPassword(string username, string email, string newPassword)
+        {
+            var user = _users.FirstOrDefault(u => u.UserName == username && u.Email == email);
+            if (user == null)
+            {
+                ViewBag.Error = "Nie znaleziono użytkownika z podanymi danymi.";
+                return View();
+            }
+
+            user.Password = newPassword;
+            SaveUsersToAppSettings();
+            ViewBag.Message = "Hasło zostało zresetowane.";
+
+            return View();
+        }
+
+
+        private void SaveUsersToAppSettings()
+        {
+            var configFile = "appsettings.json";
+            var json = System.IO.File.ReadAllText(configFile);
+
+            // Załaduj cały JSON jako dynamiczny obiekt
+            var jsonObj = Newtonsoft.Json.Linq.JObject.Parse(json);
+
+            // Nadpisz sekcję "Users" nową listą użytkowników
+            jsonObj["Users"] = Newtonsoft.Json.Linq.JArray.FromObject(_users);
+
+            // Zapisz z powrotem do pliku
+            System.IO.File.WriteAllText(configFile, jsonObj.ToString());
+        }
+
     }
 }
