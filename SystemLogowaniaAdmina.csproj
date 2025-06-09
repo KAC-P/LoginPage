@@ -7,18 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="images\**" />
     <Compile Remove="NewFolder\**" />
+    <Content Remove="images\**" />
     <Content Remove="NewFolder\**" />
+    <EmbeddedResource Remove="images\**" />
     <EmbeddedResource Remove="NewFolder\**" />
+    <None Remove="images\**" />
     <None Remove="NewFolder\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Remove="Views\Home\Privacy.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="images\" />
   </ItemGroup>
 
 </Project>

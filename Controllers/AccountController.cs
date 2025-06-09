@@ -30,30 +30,49 @@ namespace SystemLogowaniaAdmina.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string username, string password)
         {
-            var admin = _admins.Find(a => a.UserName == username && a.Password == password);
+            // Próba logowania jako admin
+            var admin = _admins.FirstOrDefault(a => a.UserName == username && a.Password == password);
 
-            if (admin == null)
+            if (admin != null)
+            {
+                var adminClaims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, admin.UserName),
+            new Claim(ClaimTypes.Email, admin.Email),
+            new Claim(ClaimTypes.Role, admin.Role)
+        };
+
+                var adminIdentity = new ClaimsIdentity(adminClaims, "CookieAuth");
+                var adminPrincipal = new ClaimsPrincipal(adminIdentity);
+
+                await HttpContext.SignInAsync("CookieAuth", adminPrincipal);
+                return RedirectToAction("Index", "Home");
+            }
+
+            // Próba logowania jako użytkownik
+            var user = _users.FirstOrDefault(u => u.UserName == username && u.Password == password);
+
+            if (user == null)
             {
                 ViewBag.Error = "Niepoprawna nazwa użytkownika lub hasło";
                 return View();
             }
 
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, admin.UserName),
-                new Claim(ClaimTypes.Role, admin.Role),
-                new Claim(ClaimTypes.Email, admin.Email)
-            };
+            var userClaims = new List<Claim>
+    {
+        new Claim(ClaimTypes.Name, user.UserName),
+        new Claim(ClaimTypes.Email, user.Email),
+        new Claim("AccessTo", string.Join(",", user.AccessTo))
+    };
 
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var principal = new ClaimsPrincipal(identity);
+            var userIdentity = new ClaimsIdentity(userClaims, "CookieAuth");
+            var userPrincipal = new ClaimsPrincipal(userIdentity);
 
-            await HttpContext.SignInAsync("CookieAuth", principal);
-
-
-            // Przekierowanie do panelu admina
-            return RedirectToAction("Index","Home");
+            await HttpContext.SignInAsync("CookieAuth", userPrincipal);
+            return RedirectToAction("Index", "Home");
         }
+
+
 
         [Authorize(Roles = "Admin")]
         public IActionResult Panel()

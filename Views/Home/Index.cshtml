@@ -4,8 +4,32 @@
     var userName = User.Identity.IsAuthenticated ? User.Identity.Name : "Gość";
     var userEmail = User.FindFirst(ClaimTypes.Email)?.Value ?? "";
     var userRole = User.FindFirst(ClaimTypes.Role)?.Value ?? "";
+
+    var accessToRaw = User.FindFirst("AccessTo")?.Value;
+    var accessTo = !string.IsNullOrEmpty(accessToRaw)
+        ? accessToRaw.Split(',')
+        : Array.Empty<string>();
 }
 
 <h2>Witaj, @userName!</h2>
 <p>Email: @userEmail</p>
-<p>Rola: @userRole</p>
+
+@if (!string.IsNullOrEmpty(userRole))
+{
+    <p>Rola: @userRole</p>
+}
+else
+{
+    <p>Uprawnienia do systemów:</p>
+    <ul>
+        @foreach (var system in accessTo)
+        {
+            <li>@system</li>
+        }
+    </ul>
+
+    @if (accessTo.Length == 0)
+    {
+        <p><em>Brak przypisanych systemów. Skontaktuj się z administratorem.</em></p>
+    }
+}
